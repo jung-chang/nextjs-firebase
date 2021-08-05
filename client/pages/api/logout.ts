@@ -5,7 +5,6 @@ initAuth();
 
 const handler = async (req, res) => {
     try {
-        console.log("LOGOUT");
         await unsetAuthCookies(req, res);
     } catch (e) {
         console.error(e);

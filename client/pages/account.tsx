@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from "firebase/app";
 import {
   useAuthUser,
   withAuthUser,
@@ -8,7 +9,13 @@ import {
 
 const AccountPage = () => {
   const AuthUser = useAuthUser();
-  return <div>{JSON.stringify(AuthUser)}</div>;
+
+  return (
+    <div>
+      {JSON.stringify(AuthUser)}
+      <button onClick={() => firebase.auth().signOut()}>Sign out</button>
+    </div>
+  );
 };
 
 export const getServerSideProps = withAuthUserTokenSSR({

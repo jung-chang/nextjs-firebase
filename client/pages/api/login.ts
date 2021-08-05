@@ -5,7 +5,6 @@ initAuth();
 
 const handler = async (req, res) => {
     try {
-        console.log("login");
         await setAuthCookies(req, res);
     } catch (e) {
         console.error(e);
