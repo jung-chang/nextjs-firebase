@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
+import firebase from "firebase/app";
 
-const ResetPasswordForm = () => {
+const ResetPasswordForm = ({ token }: { token: string }) => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -9,9 +10,10 @@ const ResetPasswordForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
 
-  const onSubmit = (event: any) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
     try {
+      await firebase.auth().confirmPasswordReset(token, password);
       setSuccess(true);
     } catch (err) {
       console.error("An unexpected error happened:", error);
@@ -31,7 +33,7 @@ const ResetPasswordForm = () => {
         ></input>
         {passwordError && <span>{passwordError}</span>}
         <input
-          type="password"
+          type="pass`word"
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(event: any) => setConfirmPassword(event.target.value)}

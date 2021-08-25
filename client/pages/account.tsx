@@ -6,15 +6,21 @@ import {
   withAuthUserTokenSSR,
   AuthAction,
 } from "next-firebase-auth";
+import Head from "next/head";
 
 const AccountPage = () => {
   const AuthUser = useAuthUser();
 
   return (
-    <div>
-      {JSON.stringify(AuthUser)}
-      <button onClick={() => firebase.auth().signOut()}>Sign out</button>
-    </div>
+    <>
+      <Head>
+        <title>Account</title>
+      </Head>
+      <div>
+        {JSON.stringify(AuthUser)}
+        <button onClick={() => firebase.auth().signOut()}>Sign out</button>
+      </div>
+    </>
   );
 };
 

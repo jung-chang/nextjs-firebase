@@ -27,19 +27,22 @@ const SignUpForm = () => {
     return emailValid && passwordValid;
   };
 
-  const onSubmit = async (event: any) => {
+  const onSubmit = (event: any) => {
     event.preventDefault();
     if (!isFormValid()) {
       return;
     }
-    try {
-      const user = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password);
-      console.log({ user });
-    } catch (error: any) {
-      setError(error.message);
-    }
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredentials: firebase.auth.UserCredential) => {
+        userCredentials.user
+          .sendEmailVerification()
+          .then(() => console.log("Email verification sent"));
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   };
 
   return (

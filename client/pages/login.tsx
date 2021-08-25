@@ -36,8 +36,6 @@ const LogInForm = () => {
       const user = await firebase
         .auth()
         .signInWithEmailAndPassword(email, password);
-      console.log(user);
-      console.log("post push");
     } catch (error: any) {
       setError(error.message);
     }
@@ -79,7 +77,6 @@ const GoogleAuthProvider = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(provider);
-      console.log(result);
     } catch (error) {
       console.error(error);
     }
@@ -99,7 +96,7 @@ const EmailAuthProvider = () => {
       return;
     }
     try {
-      await firebase.auth().sendPasswordResetEmail(email)
+      await firebase.auth().sendPasswordResetEmail(email);
       // await firebase.auth().sendSignInLinkToEmail(email, {
       //   url: "http:localhost:3000/email-login",
       //   handleCodeInApp: true,

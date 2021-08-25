@@ -2,9 +2,9 @@ import { useState } from "react";
 import firebase from "firebase/app";
 import { isEmailValid } from "utils/validation";
 
-const SendResetPasswordForm = () => {
+const SendResetPasswordForm = ({ defaultEmail }: { defaultEmail: string }) => {
   const [botField, setBotField] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(defaultEmail || "");
   const [emailError, setEmailError] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
@@ -43,7 +43,7 @@ const SendResetPasswordForm = () => {
           onChange={(event) => setEmail(event.target.value)}
         />
         {emailError && <span>{emailError}</span>}
-        <input type="submit" value="Log in" />
+        <input type="submit" value="Submit" />
         <span>{error}</span>
       </form>
     );
