@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import firebase from "firebase/app";
 import { isEmailValid, isPasswordValid } from "utils/validation";
+import { signUp } from "utils/server";
 
 const SignUpForm = () => {
   const [botField, setBotField] = useState("");
@@ -35,10 +36,13 @@ const SignUpForm = () => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials: firebase.auth.UserCredential) => {
+      .then(async (userCredentials: firebase.auth.UserCredential) => {
         userCredentials.user
           .sendEmailVerification()
-          .then(() => console.log("Email verification sent"));
+          .catch(() => console.error("Failed to send email verification."));
+        signUp(email, userCredentials.user.uid).catch(() =>
+          console.error("Failed to sign up in server.")
+        );
       })
       .catch((error) => {
         setError(error.message);

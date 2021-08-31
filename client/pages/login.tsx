@@ -3,6 +3,7 @@ import Head from "next/head";
 import firebase from "firebase/app";
 import { isEmailValid, isPasswordValid } from "utils/validation";
 import { AuthAction, withAuthUser } from "next-firebase-auth";
+import { signUp } from "utils/server";
 
 const LogInForm = () => {
   const [botField, setBotField] = useState("");
@@ -77,6 +78,11 @@ const GoogleAuthProvider = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(provider);
+      if (result.additionalUserInfo.isNewUser) {
+        signUp(result.user.email, result.user.uid).catch(() =>
+          console.error("Failed to sign up in server.")
+        );
+      }
     } catch (error) {
       console.error(error);
     }
