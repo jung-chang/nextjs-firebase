@@ -1,14 +1,19 @@
 from typing import Any
 
+from firebase_admin import auth
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
 from sqlalchemy.orm import Session
 from src.database.session import get_db_session
 from src.models.user import User
-from src.services import auth_service, user_service
+from src.services import user_service
+import logging
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/signin")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def get_current_user(
@@ -19,25 +24,17 @@ def get_current_user(
     Middleware for getting the user that requested.
     """
     try:
-        if not token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid credentials",
-            )
-        if isinstance(token, bytes):
-            token = token.decode("utf-8")
-        elif token.startswith("b'"):
-            token = token[2 : len(token) - 1]
-        token_payload = TokenPayload(**auth_service.decode_jwt(token))  # type: ignore
-    except PyJWTError as e:
-        print(e)
+        firebase_user = auth.verify_id_token(token)
+        email = firebase_user["email"]
+        if not email:
+            raise KeyError("No email in firebase response")
+        user = user_service.get_user_by_email(session, email)
+        if not user:
+            raise SystemError("User not found")
+        return user
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid credentials: {e}",
         )
-    user = user_service.get_user_by_email(session, token_payload.email)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Requesting user not found"
-        )
-    return user

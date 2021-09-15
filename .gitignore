@@ -16,3 +16,5 @@
 
 # python
 */env
+firebase_key.json
+__pycache__/

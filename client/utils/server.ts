@@ -15,11 +15,14 @@ export const SERVER = isProduction()
 
 export const API = {
   // Auth
-  SIGNUP: () => `${SERVER}/auth/signup`,
+  SIGN_UP: () => `${SERVER}/auth/signup`,
+
+  // Artists
+  GET_ARTISTS: () => `${SERVER}/artists/`,
 };
 
 export const signUp = async (email: string, firebaseId: string) => {
-  return await fetch(API.SIGNUP(), {
+  return await fetch(API.SIGN_UP(), {
     method: "POST",
     mode: "cors",
     cache: "no-store",
@@ -29,4 +32,18 @@ export const signUp = async (email: string, firebaseId: string) => {
     referrerPolicy: "no-referrer",
     body: JSON.stringify({ email, firebase_id: firebaseId }),
   });
+};
+
+export const getArtists = async (token: string) => {
+  const response = await fetch(API.GET_ARTISTS(), {
+    method: "GET",
+    mode: "cors",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `bearer ${token}`,
+    },
+    referrerPolicy: "no-referrer",
+  });
+  return await response.json();
 };
